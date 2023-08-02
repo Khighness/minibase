@@ -3,10 +3,12 @@ package top.parak.minibase;
 import java.io.IOException;
 
 /**
+ * Bytes util.
+ *
  * @author KHighness
  * @since 2023-07-29
  */
-public class Bytes {
+public final class Bytes {
 
     public final static byte[] EMPTY_BYTES = new byte[0];
     public final static String HEX_TMP = "0123456789ABCDEF";
@@ -97,8 +99,8 @@ public class Bytes {
     public static int hash(byte[] key) {
         if (key == null) return 0;
         int h = 1;
-        for (int i = 0; i < key.length; i++) {
-            h = (h << 5) + h + key[i];
+        for (byte b : key) {
+            h = (h << 5) + h + b;
         }
         return h;
     }
@@ -117,4 +119,6 @@ public class Bytes {
         return a.length - b.length;
     }
 
+    private Bytes() {
+    }
 }

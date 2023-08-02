@@ -1,6 +1,8 @@
 package top.parak.minibase;
 
 /**
+ * Base config.
+ *
  * @author KHighness
  * @since 2023-07-29
  */
