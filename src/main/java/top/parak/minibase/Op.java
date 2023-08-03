@@ -3,7 +3,7 @@ package top.parak.minibase;
 /**
  * Op type.
  *
- * @author cantai
+ * @author Khighness
  * @since 2023-08-02
  */
 public enum Op {
