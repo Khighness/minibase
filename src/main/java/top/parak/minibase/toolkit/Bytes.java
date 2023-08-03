@@ -1,4 +1,4 @@
-package top.parak.minibase;
+package top.parak.minibase.toolkit;
 
 import java.io.IOException;
 
@@ -82,14 +82,13 @@ public final class Bytes {
 
     public static byte[] slice(byte[] buf, int offset, int len) throws IOException {
         if (buf == null) {
-            throw new IOException("buffer is null");
+            throw new IOException("buf is null");
         }
         if (offset < 0 || len < 0) {
             throw new IOException("Invalid offset: " + offset + " or len: " + len);
         }
         if (offset + len > buf.length) {
-            throw new IOException("Buffer overflow, offset: " + offset + ", len: " + len
-                    + ", buf.length:" + buf.length);
+            throw new IOException("Buffer overflow, offset: " + offset + ", len: " + len + ", buf.length:" + buf.length);
         }
         byte[] result = new byte[len];
         System.arraycopy(buf, offset, result, 0, len);

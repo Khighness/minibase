@@ -1,10 +1,10 @@
-package top.parak.minibase;
+package top.parak.minibase.toolkit;
 
 
 /**
  * Requires util.
  *
- * @author cantai
+ * @author Khighness
  * @since 2023-08-02
  */
 public final class Requires {
