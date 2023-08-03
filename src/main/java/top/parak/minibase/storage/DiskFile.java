@@ -1,28 +1,34 @@
-package top.parak.minibase;
+package top.parak.minibase.storage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.parak.minibase.KeyValue;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 
 /**
  * Disk file.
  *
- * @author cantai
+ * @author Khighness
  * @since 2023-08-02
  */
-public class DiskFile implements Cloneable {
+public class DiskFile implements Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(DiskFile.class);
     private static final int BLOCK_SIZE_UP_LIMIT = 1024 * 1024 * 2;
-    private static final int BLOOM_FILTER_HASH_COUNT = 3;
-    private static final int BLOOM_FILTER_BITS_PER_KEY = 10;
 
     public static final int  TRAILER_SIZE = 8 + 4 + 8 + 8 + 8;
     public static final long DIS_FILE_MAGIC = 0xC09111002L;
 
     private String fileName;
     private RandomAccessFile in;
+
+    @Override
+    public void close() throws IOException {
+
+    }
 
     public static class BlockMeta implements Comparable<BlockMeta> {
         private static final int OFFSET_SIZE = 8;
