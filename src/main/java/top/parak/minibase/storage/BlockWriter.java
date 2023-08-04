@@ -18,15 +18,6 @@ import java.util.zip.Checksum;
  */
 public class BlockWriter {
 
-    // QAZ
-    // WSX
-    // EDC
-    // RFV TGB
-    // YHN UJM
-    // IK,
-    // OL.
-    // P;/
-
     private static final int BLOOM_FILTER_HASH_COUNT = 3;
     private static final int BLOOM_FILTER_BITS_PER_KEY = 10;
 
@@ -55,12 +46,16 @@ public class BlockWriter {
         return kvBuf;
     }
 
-    public BloomFilter getBloomFilter() {
-        return bloomFilter;
-    }
-
     public int getChecksum() {
         return (int) crc32.getValue();
+    }
+
+    public byte[] getBloomFilter() {
+        byte[][] bytes = new byte[kvBuf.size()][];
+        for (int i = 0; i < kvBuf.size(); i++) {
+            bytes[i] = kvBuf.get(i).getKey();
+        }
+        return bloomFilter.generate(bytes);
     }
 
     public KeyValue getLastKV() {

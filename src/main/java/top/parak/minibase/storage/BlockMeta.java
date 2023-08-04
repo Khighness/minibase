@@ -88,31 +88,31 @@ public class BlockMeta implements Comparable<BlockMeta> {
         return bytes;
     }
 
-    public static BlockMeta deserializeFrom(byte[] buf,  int offset) throws IOException {
+    public static BlockMeta deserializeFrom(byte[] bytes, int offset) throws IOException {
         int pos = offset;
 
         // Decode lastKV
-        KeyValue lastKV = KeyValue.deserializeFrom(buf, pos);
+        KeyValue lastKV = KeyValue.deserializeFrom(bytes, pos);
         pos += lastKV.getSerializeSize();
 
         // Decode block offset
-        long blockOffset = Bytes.toLong(Bytes.slice(buf, pos, OFFSET_SIZE));
+        long blockOffset = Bytes.toLong(Bytes.slice(bytes, pos, OFFSET_SIZE));
         pos += OFFSET_SIZE;
 
         // Decode block size
-        long blockSize = Bytes.toLong(Bytes.slice(buf, pos, SIZE_SIZE));
+        long blockSize = Bytes.toLong(Bytes.slice(bytes, pos, SIZE_SIZE));
         pos += SIZE_SIZE;
 
         // Decode length of bloom filter
-        int bloomFilterLen = Bytes.toInt(Bytes.slice(buf, pos, BF_LEN_SIZE));
+        int bloomFilterLen = Bytes.toInt(Bytes.slice(bytes, pos, BF_LEN_SIZE));
         pos += BF_LEN_SIZE;
 
         // Decode bloom filter
-        byte[] bloomFilter = Bytes.slice(buf, pos, bloomFilterLen);
+        byte[] bloomFilter = Bytes.slice(bytes, pos, bloomFilterLen);
         pos += bloomFilterLen;
 
-        if (pos <= buf.length) {
-            throw new IOException("pos(" + pos + ") should be less or equal than length of buf(" + buf.length +")");
+        if (pos <= bytes.length) {
+            throw new IOException("pos(" + pos + ") should be less or equal than length of buf(" + bytes.length +")");
         }
         return new BlockMeta(lastKV, blockOffset, blockSize, bloomFilter);
     }
