@@ -4,10 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -27,12 +29,29 @@ public class DiskStore implements Closeable {
     private List<DiskFile> diskFiles;
 
     private int maxDiskFiles;
-    private volatile AtomicLong maxField;
+    private volatile AtomicLong maxFileId;
 
     public DiskFile(String dataDir, int maxDiskFiles) {
         this.dataDir = dataDir;
         this.diskFiles = new ArrayList<>();
         this.maxDiskFiles = maxDiskFiles;
+    }
+
+    private File[] listDiskFiles() {
+        File file = new File(this.dataDir);
+        return file.listFiles(fileName -> DATA_FILE_RE.matcher(fileName.getName()).matches());
+    }
+
+    public synchronized long getMaxDiskId() {
+        File[] files = listDiskFiles();
+        long maxFileId = -1;
+        for (File file : files) {
+            Matcher matcher = DATA_FILE_RE.matcher(file.getName());
+            if (matcher.matches()) {
+                maxFileId = Math.max(Long.parseLong(matcher.group(1)), maxFileId);
+            }
+        }
+        return maxFileId;
     }
 
     @Override
