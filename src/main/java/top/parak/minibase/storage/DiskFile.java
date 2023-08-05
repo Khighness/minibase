@@ -2,6 +2,8 @@ package top.parak.minibase.storage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.parak.minibase.KeyValue;
+import top.parak.minibase.SeekIter;
 import top.parak.minibase.toolkit.Bytes;
 import top.parak.minibase.toolkit.Requires;
 
@@ -9,6 +11,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Iterator;
 import java.util.SortedSet;
 
 /**
@@ -18,8 +21,6 @@ import java.util.SortedSet;
  * @since 2023-08-02
  */
 public class DiskFile implements Closeable {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DiskFile.class);
 
     private String               fileName;
     private RandomAccessFile     in;
@@ -70,8 +71,84 @@ public class DiskFile implements Closeable {
         Requires.requireTrue(blockMetaSet.size() == blockCount);
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    private BlockReader load(BlockMeta meta) throws IOException {
+        in.seek(meta.getBlockOffset());
+
+        byte[] bytes = new byte[(int) meta.getBlockSize()];
+        Requires.requireTrue(in.read(bytes) == bytes.length);
+        return BlockReader.serializeFrom(bytes, 0, bytes.length);
+    }
+
     @Override
     public void close() throws IOException {
+        if (in != null) {
+            in.close();
+        }
+    }
+
+    private class InternalSeekIterator implements SeekIter<KeyValue> {
+
+        private int currentKVIndex = 0;
+        private BlockReader currentReader;
+        private Iterator<BlockMeta> blockMetaIter;
+
+        public InternalSeekIterator() {
+            this.currentReader = null;
+            this.blockMetaIter = blockMetaSet.iterator();
+        }
+
+        private boolean nextBlockReader() throws IOException {
+            if (blockMetaIter.hasNext()) {
+                currentReader = load(blockMetaIter.next());
+                currentKVIndex = 0;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public boolean hasNext() throws IOException {
+            if (currentReader == null) {
+                return nextBlockReader();
+            } else {
+                if (currentKVIndex < currentReader.getKvBuf().size()) {
+                    return true;
+                } else {
+                    return nextBlockReader();
+                }
+            }
+        }
+
+        @Override
+        public KeyValue next() throws IOException {
+            return currentReader.getKvBuf().get(currentKVIndex++);
+        }
+
+        @Override
+        public void seekTo(KeyValue target) throws IOException {
+            blockMetaIter = blockMetaSet.tailSet(new BlockMeta(target, 0, 0, Bytes.EMPTY_BYTES)).iterator();
+            currentReader = null;
+            if (blockMetaIter.hasNext()) {
+                BlockReader reader = load(blockMetaIter.next());
+                currentKVIndex = 0;
+                while (currentKVIndex < currentReader.getKvBuf().size()) {
+                    KeyValue currKV = currentReader.getKvBuf().get(currentKVIndex);
+                    if (currKV.compareTo(target) >= 0) {
+                        break;
+                    }
+                    currentKVIndex++;
+                }
+                if (currentKVIndex >= currentReader.getKvBuf().size()) {
+                    throw new IOException("Data block mis-encoded, lastKV of the currentReader >= kv, but " +
+                            "we found all kv < target");
+                }
+            }
+        }
 
     }
 

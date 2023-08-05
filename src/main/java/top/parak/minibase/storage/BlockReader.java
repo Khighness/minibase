@@ -56,7 +56,7 @@ public class BlockReader {
             throw new IOException("pos(" + pos + ") should be equal to size(" + size + ")");
         }
 
-        return null;
+        return new BlockReader(kvBuf);
     }
 
 }
