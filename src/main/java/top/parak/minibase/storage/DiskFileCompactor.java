@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Disk file compactor.
  *
- * @author cantai
+ * @author Khighness
  * @since 2023-08-06
  */
 public class DiskFileCompactor extends Compactor {
