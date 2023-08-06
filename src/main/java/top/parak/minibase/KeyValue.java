@@ -196,7 +196,7 @@ public class KeyValue implements Comparable<KeyValue> {
      * @throws IOException if the specified byte array is invalid
      */
     public static KeyValue deserialize(byte[] bytes) throws IOException {
-        return deserializeFrom(bytes, 0);
+        return deserialize(bytes, 0);
     }
 
     /**
@@ -207,7 +207,7 @@ public class KeyValue implements Comparable<KeyValue> {
      * @return a KeyValue instance
      * @throws IOException if the specified byte array is invalid
      */
-    public static KeyValue deserializeFrom(byte[] bytes, int offset) throws IOException {
+    public static KeyValue deserialize(byte[] bytes, int offset) throws IOException {
         Requires.requireNotNull(bytes, "bytes if null");
 
         // Decode raw key length
