@@ -24,7 +24,7 @@ public class DiskFileCompactor extends Compactor {
     private DiskStore        diskStore;
     private volatile boolean running = true;
 
-    public DiskFileCompactor(DiskStore diskStore, boolean running) {
+    public DiskFileCompactor(DiskStore diskStore) {
         this.diskStore = diskStore;
         this.setDaemon(true);
     }
