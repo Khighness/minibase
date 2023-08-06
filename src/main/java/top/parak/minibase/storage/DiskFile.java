@@ -88,6 +88,10 @@ public class DiskFile implements Closeable {
         }
     }
 
+    public SeekIter<KeyValue> iterator() {
+        return new InternalSeekIterator();
+    }
+
     private class InternalSeekIterator implements SeekIter<KeyValue> {
 
         private int currentKVIndex = 0;

@@ -42,7 +42,7 @@ public class DiskFileWriter implements Closeable {
     private long             blockIndexOffset = 0;
     private long             blockIndexSize = 0;
 
-    public DiskFileWriter(String fileName) throws Exception {
+    public DiskFileWriter(String fileName) throws IOException {
         this.fileName = fileName;
 
         File file = new File(this.fileName);
