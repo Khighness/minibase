@@ -88,11 +88,11 @@ public class BlockMeta implements Comparable<BlockMeta> {
         return bytes;
     }
 
-    public static BlockMeta deserializeFrom(byte[] bytes, int offset) throws IOException {
+    public static BlockMeta deserialize(byte[] bytes, int offset) throws IOException {
         int pos = offset;
 
         // Decode lastKV
-        KeyValue lastKV = KeyValue.deserializeFrom(bytes, pos);
+        KeyValue lastKV = KeyValue.deserialize(bytes, pos);
         pos += lastKV.getSerializeSize();
 
         // Decode block offset

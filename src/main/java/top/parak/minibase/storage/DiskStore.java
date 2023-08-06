@@ -20,18 +20,18 @@ import java.util.regex.Pattern;
  */
 public class DiskStore implements Closeable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DiskStore.class);
-    private static final String FILE_NAME_TMP_SUFFIX = ".tmp";
-    private static final String FILE_NAME_ARCHIVE_SUFFIX = ".archive";
+    private static final Logger  LOG = LoggerFactory.getLogger(DiskStore.class);
+    private static final String  FILE_NAME_TMP_SUFFIX = ".tmp";
+    private static final String  FILE_NAME_ARCHIVE_SUFFIX = ".archive";
     private static final Pattern DATA_FILE_RE = Pattern.compile("data\\.([0-9]+)");
 
-    private String dataDir;
+    private String         dataDir;
     private List<DiskFile> diskFiles;
 
-    private int maxDiskFiles;
+    private int                 maxDiskFiles;
     private volatile AtomicLong maxFileId;
 
-    public DiskFile(String dataDir, int maxDiskFiles) {
+    public DiskStore(String dataDir, int maxDiskFiles) {
         this.dataDir = dataDir;
         this.diskFiles = new ArrayList<>();
         this.maxDiskFiles = maxDiskFiles;
@@ -54,9 +54,59 @@ public class DiskStore implements Closeable {
         return maxFileId;
     }
 
+    public synchronized long nextDiskFileId() {
+        return maxFileId.incrementAndGet();
+    }
+
+    public void addDiskFile(DiskFile diskFile) {
+        synchronized (diskFiles) {
+            diskFiles.add(diskFile);
+        }
+    }
+
+    public synchronized void addDiskFile(String fileName) throws IOException {
+        DiskFile diskFile = new DiskFile();
+        diskFile.open(fileName);
+        addDiskFile(diskFile);
+    }
+
+    public synchronized String getNextDiskFileName() {
+        return new File(this.dataDir, String.format("data.%20d", nextDiskFileId())).toString();
+    }
+
+    public void open() throws IOException {
+        File[] files = listDiskFiles();
+        for (File file : files) {
+            DiskFile diskFile = new DiskFile();
+            diskFile.open(file.getAbsolutePath());
+            diskFiles.add(diskFile);
+        }
+        maxFileId = new AtomicLong(getMaxDiskId());
+    }
+
+    public List<DiskFile> getDiskFiles() {
+        synchronized (diskFiles) {
+            return new ArrayList<>(diskFiles);
+        }
+    }
+
+    public long getMaxDiskFiles() {
+        return this.maxDiskFiles;
+    }
+
     @Override
     public void close() throws IOException {
-
+        IOException closedException = null;
+        for (DiskFile diskFile : diskFiles) {
+            try {
+                diskFile.close();
+            } catch (IOException e) {
+                closedException = e;
+            }
+        }
+        if (closedException != null) {
+            throw closedException;
+        }
     }
 
 }

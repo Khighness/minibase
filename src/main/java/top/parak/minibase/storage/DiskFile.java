@@ -1,7 +1,5 @@
 package top.parak.minibase.storage;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import top.parak.minibase.KeyValue;
 import top.parak.minibase.SeekIter;
 import top.parak.minibase.toolkit.Bytes;
@@ -63,7 +61,7 @@ public class DiskFile implements Closeable {
 
         int offset = 0;
         do {
-            BlockMeta blockMeta = BlockMeta.deserializeFrom(bytes, offset);
+            BlockMeta blockMeta = BlockMeta.deserialize(bytes, offset);
             blockMetaSet.add(blockMeta);
             offset += blockMeta.getSerializeSize();
         } while (offset < bytes.length);
@@ -80,7 +78,7 @@ public class DiskFile implements Closeable {
 
         byte[] bytes = new byte[(int) meta.getBlockSize()];
         Requires.requireTrue(in.read(bytes) == bytes.length);
-        return BlockReader.serializeFrom(bytes, 0, bytes.length);
+        return BlockReader.deserialize(bytes, 0, bytes.length);
     }
 
     @Override

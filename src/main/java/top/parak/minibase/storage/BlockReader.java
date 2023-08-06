@@ -27,7 +27,7 @@ public class BlockReader {
         return kvBuf;
     }
 
-    public static BlockReader serializeFrom(byte[] bytes, int offset, int size) throws IOException {
+    public static BlockReader deserialize(byte[] bytes, int offset, int size) throws IOException {
         int pos = offset;
         List<KeyValue> kvBuf = new ArrayList<>();
         Checksum crc32 = new CRC32();
@@ -38,7 +38,7 @@ public class BlockReader {
 
         // Decode kv
         for (int i = 0; i < kvSize; i++) {
-            KeyValue kv = KeyValue.deserializeFrom(bytes, offset + pos);
+            KeyValue kv = KeyValue.deserialize(bytes, offset + pos);
             kvBuf.add(kv);
             crc32.update(bytes, offset + pos, kv.getSerializeSize());
             pos += kv.getSerializeSize();
