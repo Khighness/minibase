@@ -182,7 +182,7 @@ public class KeyValue implements Comparable<KeyValue> {
      * @param sequenceId the sequence id
      * @return a KeyValue instance.
      */
-    public static KeyValue createPut(byte[] key, byte[] value, Op op, long sequenceId) {
+    public static KeyValue createPut(byte[] key, byte[] value, long sequenceId) {
         return new KeyValue(key, value, Op.Put, sequenceId);
     }
 
@@ -190,12 +190,11 @@ public class KeyValue implements Comparable<KeyValue> {
      * Create a KeyValue instance whose op is {@link Op#Delete}.
      *
      * @param key        the byte array of key
-     * @param value      the byte array of value
      * @param sequenceId the sequence id
      * @return a KeyValue instance.
      */
-    public static KeyValue createDelete(byte[] key, byte[] value, long sequenceId) {
-        return new KeyValue(key, value, Op.Delete, sequenceId);
+    public static KeyValue createDelete(byte[] key, long sequenceId) {
+        return new KeyValue(key, Bytes.EMPTY_BYTES, Op.Delete, sequenceId);
     }
 
     /**
