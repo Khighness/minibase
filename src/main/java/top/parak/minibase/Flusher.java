@@ -1,5 +1,7 @@
 package top.parak.minibase;
 
+import java.io.IOException;
+
 /**
  * Flusher.
  *
@@ -12,8 +14,8 @@ public interface Flusher {
      * Flush file.
      *
      * @param it iterator for fetching KeyValue one by one
-     * @throws Exception if an Exception occurs
+     * @throws IOException if an IOException occurs
      */
-    void flush(Iter<KeyValue> it) throws Exception;
+    void flush(Iter<KeyValue> it) throws IOException;
 
 }

@@ -4,6 +4,8 @@ import top.parak.minibase.toolkit.Bytes;
 import top.parak.minibase.toolkit.Requires;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Key-Value.
@@ -149,6 +151,14 @@ public class KeyValue implements Comparable<KeyValue> {
         if (! (obj instanceof KeyValue)) return false;
         KeyValue that = (KeyValue) obj;
         return this.compareTo(that) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(op, sequenceId);
+        result = 31 * result + Arrays.hashCode(key);
+        result = 31 * result + Arrays.hashCode(value);
+        return result;
     }
 
     /**
