@@ -42,7 +42,7 @@ public class MemStore implements Closeable {
     private Flusher         flusher;
     private ExecutorService executorService;
 
-    public MemStore(Config config, Flusher flusher, ExecutorService executorService, ) {
+    public MemStore(Config config, Flusher flusher, ExecutorService executorService) {
         this.config = config;
         this.flusher = flusher;
         this.executorService = executorService;
@@ -74,7 +74,7 @@ public class MemStore implements Closeable {
                 throw new IOException("MemStore is full, current data size is " + dataSize.get() + "B, max is "
                         + config.getMaxMemStoreSize() + "B, please wait util the the flushing is finished.");
             } else if (isSnapshotFlushing.compareAndSet(false, true)) {
-                executorService.submit();
+                executorService.submit(new FlusherTask());
             }
         }
     }
@@ -85,6 +85,10 @@ public class MemStore implements Closeable {
 
     public boolean isFlushing() {
         return this.isSnapshotFlushing.get();
+    }
+
+    public SeekIter<KeyValue> createIterator() throws IOException {
+        return new MemStoreIter(kvMap, snapshot);
     }
 
     @Override
