@@ -1,4 +1,4 @@
-package top.parak.minibase;
+package top.parak.minibase.storage;
 
 import java.io.IOException;
 

@@ -1,6 +1,5 @@
 package top.parak.minibase.storage;
 
-import top.parak.minibase.Flusher;
 import top.parak.minibase.Iter;
 import top.parak.minibase.KeyValue;
 

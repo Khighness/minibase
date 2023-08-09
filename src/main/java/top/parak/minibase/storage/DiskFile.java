@@ -1,7 +1,6 @@
 package top.parak.minibase.storage;
 
 import top.parak.minibase.KeyValue;
-import top.parak.minibase.SeekIter;
 import top.parak.minibase.toolkit.Bytes;
 import top.parak.minibase.toolkit.Requires;
 

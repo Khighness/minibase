@@ -1,14 +1,13 @@
-package top.parak.minibase.storage;
+package top.parak.minibase;
 
-import com.sun.org.apache.bcel.internal.generic.LADD;
-import top.parak.minibase.Compactor;
-import top.parak.minibase.Iter;
-import top.parak.minibase.KeyValue;
-import top.parak.minibase.MiniBase;
-import top.parak.minibase.Op;
-import top.parak.minibase.SeekIter;
 import top.parak.minibase.config.Config;
+import top.parak.minibase.storage.Compactor;
+import top.parak.minibase.storage.DiskFileCompactor;
+import top.parak.minibase.storage.DiskFileFlusher;
+import top.parak.minibase.storage.DiskStore;
 import top.parak.minibase.storage.DiskStore.MultiIter;
+import top.parak.minibase.storage.MemStore;
+import top.parak.minibase.storage.SeekIter;
 import top.parak.minibase.toolkit.Bytes;
 import top.parak.minibase.toolkit.Requires;
 
@@ -32,9 +31,9 @@ import java.util.concurrent.atomic.AtomicLong;
 public class MStore implements MiniBase {
 
     private ExecutorService executorService;
-    private DiskStore       diskStore;
-    private MemStore        memStore;
-    private Compactor       compactor;
+    private DiskStore diskStore;
+    private MemStore memStore;
+    private Compactor compactor;
     private AtomicLong      sequenceId;
     private Config          config;
 

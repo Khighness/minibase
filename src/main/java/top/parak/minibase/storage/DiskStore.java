@@ -3,7 +3,6 @@ package top.parak.minibase.storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.parak.minibase.KeyValue;
-import top.parak.minibase.SeekIter;
 import top.parak.minibase.toolkit.Requires;
 
 import java.io.Closeable;

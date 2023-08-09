@@ -2,7 +2,6 @@ package top.parak.minibase.storage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import top.parak.minibase.Compactor;
 import top.parak.minibase.Iter;
 import top.parak.minibase.KeyValue;
 

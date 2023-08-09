@@ -2,9 +2,7 @@ package top.parak.minibase.storage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import top.parak.minibase.Flusher;
 import top.parak.minibase.KeyValue;
-import top.parak.minibase.SeekIter;
 import top.parak.minibase.config.Config;
 import top.parak.minibase.storage.DiskStore.MultiIter;
 
