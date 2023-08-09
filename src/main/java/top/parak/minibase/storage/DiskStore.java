@@ -23,11 +23,14 @@ import java.util.regex.Pattern;
  * @since 2023-08-05
  */
 public class DiskStore implements Closeable {
+    private static final Logger  LOG = LoggerFactory.getLogger(DiskStore.class);
 
     public static final String FILE_NAME_TMP_SUFFIX = ".tmp";
     public static final String FILE_NAME_ARCHIVE_SUFFIX = ".archive";
 
-    private static final Logger  LOG = LoggerFactory.getLogger(DiskStore.class);
+    public static final int BLOOM_FILTER_HASH_COUNT   = 3;
+    public static final int BLOOM_FILTER_BITS_PER_KEY = 10;
+
     private static final Pattern DATA_FILE_RE = Pattern.compile("data\\.([0-9]+)");
 
     private String         dataDir;
@@ -76,11 +79,12 @@ public class DiskStore implements Closeable {
     }
 
     public synchronized String getNextDiskFileName() {
-        return new File(this.dataDir, String.format("data.%20d", nextDiskFileId())).toString();
+        return new File(this.dataDir, String.format("data.%020d", nextDiskFileId())).toString();
     }
 
     public void open() throws IOException {
         File[] files = listDiskFiles();
+        LOG.info("Open disk store: {}", files);
         for (File file : files) {
             DiskFile diskFile = new DiskFile();
             diskFile.open(file.getAbsolutePath());
@@ -191,7 +195,5 @@ public class DiskStore implements Closeable {
             }
         }
     }
-
-
 
 }

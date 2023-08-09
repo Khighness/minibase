@@ -108,12 +108,13 @@ public class MemStore implements Closeable {
 
             // 2. Flush snapshot to disk file.
             boolean success = false;
-            for (int i = 0; i < config.getMaxFlushRetries(); i++) {
+            for (int i = 1; i <= config.getMaxFlushRetries(); i++) {
                 try {
                     flusher.flush(new IteratorWrapper(snapshot));
                     success = true;
-                } catch (IOException e) {
-                    LOG.error("Flush failed, retry times is " + i + ", max is " + config.getMaxFlushRetries());
+                    LOG.info("Flush succeed");
+                } catch (Exception ex) {
+                    LOG.error("Flush failed, retry times: {}, max retries: {}", i, config.getMaxFlushRetries(), ex);
                     if (i >= config.getMaxFlushRetries()) {
                         break;
                     }

@@ -7,16 +7,16 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Disk file flusher.
+ * Disk store flusher.
  *
  * @author cantai
  * @since 2023-08-08
  */
-public class DiskFileFlusher implements Flusher {
+public class DiskStoreFlusher implements Flusher {
 
     private DiskStore diskStore;
 
-    public DiskFileFlusher(DiskStore diskStore) {
+    public DiskStoreFlusher(DiskStore diskStore) {
         this.diskStore = diskStore;
     }
 
@@ -25,7 +25,7 @@ public class DiskFileFlusher implements Flusher {
         String fileName = diskStore.getNextDiskFileName();
         String fileTempName = fileName + DiskStore.FILE_NAME_ARCHIVE_SUFFIX;
         try {
-            try (DiskFileWriter writer = new DiskFileWriter(fileName)) {
+            try (DiskFileWriter writer = new DiskFileWriter(fileTempName)) {
                 while (it.hasNext()) {
                     writer.append(it.next());
                 }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
+
 /**
  * Block writer.
  *
@@ -17,9 +18,6 @@ import java.util.zip.Checksum;
  * @since 2023-08-03
  */
 public class BlockWriter {
-
-    private static final int BLOOM_FILTER_HASH_COUNT = 3;
-    private static final int BLOOM_FILTER_BITS_PER_KEY = 10;
 
     public static final int KV_SIZE_LEN = 4;
     public static final int CHECKSUM_LEN = 4;
@@ -34,7 +32,7 @@ public class BlockWriter {
     public BlockWriter() {
         totalSize = 0;
         kvBuf = new ArrayList<>();
-        bloomFilter = new BloomFilter(BLOOM_FILTER_HASH_COUNT, BLOOM_FILTER_BITS_PER_KEY);
+        bloomFilter = new BloomFilter(DiskStore.BLOOM_FILTER_HASH_COUNT, DiskStore.BLOOM_FILTER_BITS_PER_KEY);
         crc32 = new CRC32();
     }
 

@@ -9,26 +9,31 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Disk file compactor.
+ * Disk store compactor.
  *
  * @author Khighness
  * @since 2023-08-06
  */
-public class DiskFileCompactor extends Compactor {
+public class DiskStoreCompactor extends Compactor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DiskFileCompactor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DiskStoreCompactor.class);
 
     private DiskStore        diskStore;
     private volatile boolean running = true;
 
-    public DiskFileCompactor(DiskStore diskStore) {
+    public DiskStoreCompactor(DiskStore diskStore) {
         this.diskStore = diskStore;
         this.setDaemon(true);
     }
 
     private void performCompact(List<DiskFile> filesToCompact) throws IOException {
+        if (filesToCompact == null || filesToCompact.isEmpty()) {
+            return;
+        }
+
         String fileName = diskStore.getNextDiskFileName();
         String fileTempName = fileName + DiskStore.FILE_NAME_TMP_SUFFIX;
         try {
@@ -47,10 +52,11 @@ public class DiskFileCompactor extends Compactor {
 
             for (DiskFile diskFile : filesToCompact) {
                 diskFile.close();
-                File f = new File(diskFile.getFileName());
+                File oldFile = new File(diskFile.getFileName());
                 File archliveFile = new File(diskFile.getFileName() + DiskStore.FILE_NAME_ARCHIVE_SUFFIX);
-                if (!f.renameTo(archliveFile)) {
-                    LOG.error("Rename " + diskFile.getFileName() + " to " + fileName + " failed");
+                if (!oldFile.renameTo(archliveFile)) {
+                    LOG.error("Perform compact, failed to rename file {} to archive file {}",
+                            oldFile.getName(), archliveFile.getName());
                 }
             }
             diskStore.removeDiskFiles(filesToCompact);
@@ -61,6 +67,9 @@ public class DiskFileCompactor extends Compactor {
                 file.delete();
             }
         }
+
+        List<String> diskFileNames = filesToCompact.stream().map(DiskFile::getFileName).collect(Collectors.toList());
+        LOG.info("Perform compact, {} -> {}", diskFileNames, fileName);
     }
 
     @Override
@@ -82,7 +91,7 @@ public class DiskFileCompactor extends Compactor {
                     Thread.sleep(1000);
                 }
             } catch (IOException e) {
-                LOG.error("Major compaction failed: ", e);
+                LOG.error("Major compaction failed", e);
             } catch (InterruptedException ie) {
                 LOG.error("Major compaction interrupted, stop running", ie);
                 break;

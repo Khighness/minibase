@@ -2,8 +2,8 @@ package top.parak.minibase;
 
 import top.parak.minibase.config.Config;
 import top.parak.minibase.storage.Compactor;
-import top.parak.minibase.storage.DiskFileCompactor;
-import top.parak.minibase.storage.DiskFileFlusher;
+import top.parak.minibase.storage.DiskStoreCompactor;
+import top.parak.minibase.storage.DiskStoreFlusher;
 import top.parak.minibase.storage.DiskStore;
 import top.parak.minibase.storage.DiskStore.MultiIter;
 import top.parak.minibase.storage.MemStore;
@@ -38,7 +38,7 @@ public class MStore implements MiniBase {
     private Config          config;
 
     public static MStore create(Config config) {
-        Requires.requireNotNull(config);
+        Requires.requireNotNull(config, "");
         return new MStore(config);
     }
 
@@ -50,7 +50,7 @@ public class MStore implements MiniBase {
         this.config = config;
     }
 
-    public MiniBase open() throws Exception {
+    public MiniBase open() throws IOException {
         AtomicInteger threadCounter = new AtomicInteger(0);
         ThreadFactory threadFactory = r -> {
             Thread t = new Thread(r);
@@ -67,9 +67,9 @@ public class MStore implements MiniBase {
 
         this.diskStore = new DiskStore(config.getDataDir(), config.getMaxDiskFiles());
         this.diskStore.open();
-        this.memStore = new MemStore(config, new DiskFileFlusher(diskStore), executorService);
+        this.memStore = new MemStore(config, new DiskStoreFlusher(diskStore), executorService);
         this.sequenceId = new AtomicLong(0);
-        this.compactor = new DiskFileCompactor(diskStore);
+        this.compactor = new DiskStoreCompactor(diskStore);
         this.compactor.start();
         return this;
     }

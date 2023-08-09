@@ -52,6 +52,7 @@ public class DiskFile implements Closeable {
 
         bytes = new byte[8];
         Requires.requireTrue(in.read(bytes) == bytes.length);
+        System.out.println(Bytes.toLong(bytes));
         Requires.requireTrue(DiskFileWriter.DISK_FILE_MAGIC == Bytes.toLong(bytes));
 
         bytes = new byte[(int) blockIndexSize];

@@ -35,10 +35,10 @@ public class KeyValue implements Comparable<KeyValue> {
     private final long   sequenceId;
 
     private KeyValue(byte[] key, byte[] value, Op op, long sequenceId) {
-        Requires.requireNotNull(key);
-        Requires.requireNotNull(value);
-        Requires.requireNotNull(op);
-        Requires.requireTrue(sequenceId > 0);
+        Requires.requireNotNull(key, "key cannot be null");
+        Requires.requireNotNull(value, "value cannot be null");
+        Requires.requireNotNull(op, "op cannot be null");
+        Requires.requireTrue(sequenceId > 0, "sequenceId should be positive");
 
         this.key = key;
         this.value = value;
@@ -130,7 +130,7 @@ public class KeyValue implements Comparable<KeyValue> {
      */
     @Override
     public int compareTo(KeyValue that) {
-        Requires.requireNotNull(key);
+        Requires.requireNotNull(that, "that can not be null");
 
         int ret = Bytes.compare(this.key, that.key);
         if (ret != 0) {
